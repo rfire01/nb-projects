@@ -20,3 +20,13 @@ st = subject_text()
 ##body - the text of the subject
 
 st.get_subjects(source_id)
+
+4.reprocessing
+##the previous function returns the dictionary from the DB if exists
+##otherwise, process the pdf and save it in the DB
+##if you want to reprocess a file you can use the following function
+
+st.process_file(source_id,allow_fonts=True)
+
+##this function use a metric for filtering, if you want to process the file
+##without the filtering, use it with allow_fonts=False
