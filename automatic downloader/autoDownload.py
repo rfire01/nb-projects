@@ -43,9 +43,11 @@ class downloader:
         handled=[]
         os.chdir(self.download_path)
         # Download loop
+        index=0
         for source in source_id_list:
             succeed = False
-            while not succeed:
+            tries=0
+            while not succeed and tries<5:
                 try:
                     tmp = self.driver.get("nb.mit.edu:8082/pdf/repository/%s" % source)
                     time.sleep(2)
@@ -57,7 +59,7 @@ class downloader:
                     folder_files.sort(key=lambda x: os.path.getctime(x))
                     newest_file = folder_files[-1]
                     handled.append(newest_file.split('.pdf')[0])
-                    name_index[newest_file.split('.pdf')[0]]=len(name_index)
+                    name_index[newest_file.split('.pdf')[0]]=index
                     downloaded_files = [f[:f.rfind('.pdf')] for f in listdir(self.download_path) if
                                         isfile(join(self.download_path, f))]
 
@@ -67,7 +69,8 @@ class downloader:
 
                     succeed=True
                 except:
-                    pass
+                    tries = tries + 1
+            index = index + 1
 
         # Wait for files to download.
         while True:
@@ -97,3 +100,6 @@ class downloader:
 
 
         time.sleep(2)
+
+d=downloader()
+d.download_pdfs([15638,15651,1515151,15430,13876,15647])
