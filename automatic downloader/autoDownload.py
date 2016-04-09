@@ -100,6 +100,3 @@ class downloader:
 
 
         time.sleep(2)
-
-d=downloader()
-d.download_pdfs([15638,15651,1515151,15430,13876,15647])
