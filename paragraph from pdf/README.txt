@@ -30,3 +30,11 @@ st.process_file(source_id,allow_fonts=True)
 
 ##this function use a metric for filtering, if you want to process the file
 ##without the filtering, use it with allow_fonts=False
+
+REQUIREMENTS:
+
+-sqlalchemy
+-pandas
+-pdfminer
+-numpy
+-lxml

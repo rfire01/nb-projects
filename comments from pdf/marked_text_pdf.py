@@ -73,4 +73,5 @@ class markedExtract:
                 return text
 
 #m=markedExtract()
-#m.extract_comments_for_pdf(1)
+#m.extract_comments_for_pdf(15638)
+#print m.get_text_by_comment_id(301601)

@@ -22,3 +22,13 @@ m.extract_comments_for_pdf(source_id)
 ##if non of the above takes place, function "extract_comments_for_pdf" need to be used first
 
 m.get_text_by_comment_id(comment_id)
+
+
+REQUIREMENTS:
+
+-django
+-sqlalchemy
+-pandas
+-pdfminer
+-pdfquery
+-pyPdf
