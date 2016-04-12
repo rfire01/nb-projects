@@ -5,11 +5,17 @@ import string
 import os
 import operator
 from sqlAdder import sqlModifier
+import re
 
 class subject_text:
 
     def __init__(self):
         self.sm  = sqlModifier()
+
+    def __escape_xml_illegal_chars__(self,val, replacement=''):
+        illegal_xml_chars_RE = re.compile(u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]')
+
+        return illegal_xml_chars_RE.sub(replacement, val)
 
     def __create_tree__(self,filepath):
         file=open(filepath,'rb')
@@ -17,14 +23,17 @@ class subject_text:
         file.close()
         printable = set(string.printable)
         xml = filter(lambda x: x in printable, text)
-        return etree.fromstring(xml)
+        xml2 = self.__escape_xml_illegal_chars__(xml)
+        return etree.fromstring(xml2)
 
     def __pdf_to_xml_tree__(self,source_id):
         filepath = "tmp/%s.pdf" % (source_id)
         if os.path.isfile(filepath)==False:
             raise Exception('file %s doesnt exists' % (filepath))
-        command="pdf2txt.py -o tmp/tmp_file.xml %s" % filepath
-        os.system(command)
+        command="python pdf2txt.py -o tmp/tmp_file.xml %s" % filepath
+        check_enc = os.system(command)
+        if check_enc!=0:
+            raise Exception('file %s isnt extractable (file encrypted)' % (filepath))
         return self.__create_tree__('tmp/tmp_file.xml')
 
     def __first_evaluation__(self,pages):
@@ -70,6 +79,19 @@ class subject_text:
             del fonts['']
         except KeyError:
             pass
+
+        def check_empty(list):
+            res=True
+            for item in list:
+                if not res:
+                    return res
+                if type(item)==type([]):
+                    res = res and check_empty(item)
+                else:
+                    return False
+            return res
+        if check_empty(paging):
+            raise Exception('no text found in file:')
 
         return paging, fonts , numpy.median(size_list)
 
@@ -124,11 +146,16 @@ class subject_text:
         try:
             pages = self.__pdf_to_xml_tree__(source_id)
         except Exception as err:
-            print err.args
-            return {}
+           print "received error in parsing"
+           print err.args[0]
+           return {}
         #pages = etree.parse('tmp.xml').getroot()
 
-        paging, fonts, mid = self.__first_evaluation__(pages)
+        try:
+            paging, fonts, mid = self.__first_evaluation__(pages)
+        except Exception as err:
+            print "%s %s" % (err.args[0],source_id)
+            return {}
 
         if allow_fonts:
             label_fonts = self.__get_label_fonts__(pages,fonts,mid)

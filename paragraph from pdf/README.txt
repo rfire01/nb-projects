@@ -38,3 +38,9 @@ REQUIREMENTS:
 -pdfminer
 -numpy
 -lxml
+
+EXCEPTIONS:
+
+##file that don't have text (pdf made of imageds) or encrypted files
+##won't be added to the data base, and the name of the pdf will be
+##printed to the screen

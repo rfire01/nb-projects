@@ -71,7 +71,3 @@ class markedExtract:
                 text = self.__get_parent_body__(comments[parent_id]['parent'],comments,extractor,page)
                 comments[parent_id]['body'] = text
                 return text
-
-#m=markedExtract()
-#m.extract_comments_for_pdf(15638)
-#print m.get_text_by_comment_id(301601)
